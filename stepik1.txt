@@ -2,4 +2,5 @@
 
 Продолжаю изучать базовые команды Git
 Add Line
-add branch line update
+add branch line updategit gui
+New line GUI
