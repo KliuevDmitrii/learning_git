@@ -9,4 +9,4 @@ class DataProvider:
         self.data = global_data
 
     def get_api_key(self) -> str:
-        return self.data.get("apikey")
+        return self.data.get("access_key")
