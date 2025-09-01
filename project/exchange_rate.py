@@ -2,6 +2,8 @@ from ConfigProvider import ConfigProvider
 from DataProvider import DataProvider
 import requests
 import time
+import urllib.parse
+import urllib.request
 
 config = ConfigProvider()
 url_base = config.get_exchange_url_base()
@@ -16,6 +18,24 @@ access_key = dp.get_api_key()
 
 max_threshold = config.get_exchange_threshold()
 min_threshold = config.get_exchange_min_threshold()
+
+def send_telegram(msg):
+    base_url = config.get_exchange_url_telegram()
+    token = dp.get_telegram_token()
+    chat_id = dp.get_telegram_chat_id()
+    
+    url = f"{base_url}{token}/sendMessage"
+    data = urllib.parse.urlencode({
+        "chat_id": chat_id,
+        "text": msg
+    }).encode()
+
+    try:
+        with urllib.request.urlopen(url, data=data) as response:
+            result = response.read()
+            print("Уведомление отправлено:", result)
+    except Exception as e:
+        print("Ошибка отправки в Telegram:", e)
 
 def get_usd_rate():
     headers = {"apikey": access_key}
@@ -39,10 +59,17 @@ while True:
         continue
 
     if rate > max_threshold:
-        print(f'Курс превысил верхний порог: {rate} > {max_threshold}')
+        message = f'Курс {base_currency}/{target_currency} превысил {max_threshold}: {rate}'
+        print(message)
+        send_telegram(message)
         break
     elif rate < min_threshold:
-        print(f'Курс ниже нижнего порога: {rate} < {min_threshold}')
+        message = f'Курс {base_currency}/{target_currency} ниже {min_threshold}: {rate}'
+        print(message)
+        send_telegram(message)
+        break
+    else:
+        print(f'Курс в пределах допустимого диапазона: {min_threshold} ≤ {rate} ≤ {max_threshold}')
         break
 
     time.sleep(60)

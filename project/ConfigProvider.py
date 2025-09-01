@@ -23,3 +23,6 @@ class ConfigProvider:
     
     def get_exchange_min_threshold(self):
         return self.config.getfloat('exchange', 'min_threshold')
+    
+    def get_exchange_url_telegram(self):
+        return self.config.get('telegram', 'url_telegram')

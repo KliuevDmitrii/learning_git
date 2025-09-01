@@ -10,3 +10,9 @@ class DataProvider:
 
     def get_api_key(self) -> str:
         return self.data.get("access_key")
+    
+    def get_telegram_token(self):
+        return self.data["TELEGRAM"]["TOKEN"]
+
+    def get_telegram_chat_id(self):
+        return self.data["TELEGRAM"]["CHAT_ID"]
