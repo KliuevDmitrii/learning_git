@@ -3,7 +3,7 @@ __pycache__
 pytest.ini
 .vscode
 data.json
-config.ini
+# config.ini
 
 allure*
 allure-report/

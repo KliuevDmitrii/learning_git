@@ -1,0 +1,7 @@
+{
+    "TELEGRAM": {
+        "TOKEN":"yourtoken",
+        "CHAT_ID":"yourchatid"
+    },
+    "access_key":"youraccesskey"
+}

@@ -51,7 +51,7 @@ def get_usd_rate():
 
 while True:
     rate = get_usd_rate()
-    print(f'{base_currency}/{target_currency}: {rate}')
+    # print(f'{base_currency}/{target_currency}: {rate}')
 
     if rate is None:
         print("Курс не получен. Ждём 60 сек.")
@@ -59,12 +59,12 @@ while True:
         continue
 
     if rate > max_threshold:
-        message = f'Курс {base_currency}/{target_currency} превысил {max_threshold}: {rate}'
+        message = f'Курс {base_currency}/{target_currency} превысил максимально установленный {max_threshold}: {rate}'
         print(message)
         send_telegram(message)
         break
     elif rate < min_threshold:
-        message = f'Курс {base_currency}/{target_currency} ниже {min_threshold}: {rate}'
+        message = f'Курс {base_currency}/{target_currency} ниже минимально установленного {min_threshold}: {rate}'
         print(message)
         send_telegram(message)
         break
