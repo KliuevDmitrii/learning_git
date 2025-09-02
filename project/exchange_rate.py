@@ -69,7 +69,9 @@ while True:
         send_telegram(message)
         break
     else:
-        print(f'Курс в пределах допустимого диапазона: {min_threshold} ≤ {rate} ≤ {max_threshold}')
+        message = f'Курс в пределах допустимого диапазона: {min_threshold} ≤ {rate} ≤ {max_threshold}'
+        print(message)
+        send_telegram(message)
         break
 
     time.sleep(60)
