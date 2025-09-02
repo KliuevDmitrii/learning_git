@@ -49,30 +49,21 @@ def get_usd_rate():
         print("Ошибка от API:", data.get("error", "Нет поля 'rates'"))
         return None
 
-while True:
-    rate = get_usd_rate()
-    # print(f'{base_currency}/{target_currency}: {rate}')
 
-    if rate is None:
-        print("Курс не получен. Ждём 60 сек.")
-        time.sleep(60)
-        continue
+rate = get_usd_rate()
+# print(f'{base_currency}/{target_currency}: {rate}')
 
-    if rate > max_threshold:
-        message = f'Курс {base_currency}/{target_currency} превысил максимально установленный {max_threshold}: {rate}'
-        print(message)
-        send_telegram(message)
-        break
-    elif rate < min_threshold:
-        message = f'Курс {base_currency}/{target_currency} ниже минимально установленного {min_threshold}: {rate}'
-        print(message)
-        send_telegram(message)
-        break
-    else:
-        message = f'Курс в пределах допустимого диапазона: {min_threshold} ≤ {rate} ≤ {max_threshold}'
-        print(message)
-        send_telegram(message)
-        break
-
-    time.sleep(60)
+if rate is None:
+    print("Курс не получен. Завершение работы.")
+    exit(1)
     
+
+if rate > max_threshold:
+    message = f'📈 Курс {base_currency}/{target_currency} превысил максимум {max_threshold}: {rate}'
+elif rate < min_threshold:
+    message = f'📉 Курс {base_currency}/{target_currency} ниже минимума {min_threshold}: {rate}'
+else:
+    message = f'✅ Курс в пределах нормы: {min_threshold} ≤ {rate} ≤ {max_threshold}'
+
+print(message)
+send_telegram(message)
