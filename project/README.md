@@ -33,7 +33,7 @@ pip3 install -r requirements.txt
     }
 
 5. Отредактируйте `config.ini`:
-
+'''
 [exchange]
 url_base = https://api.apilayer.com/exchangerates_data/latest
 base_currency = USD
@@ -43,9 +43,11 @@ min_threshold = 2.4
 
 [telegram]
 url_telegram = https://api.telegram.org/bot
+'''
 
 
 6. Структура проекта:
+'''
 learning_git/
 ├── project/
 │ ├── exchange_rate.py
@@ -55,6 +57,7 @@ learning_git/
 │ └── data.json
 ├── requirements.txt
 └── README.md
+'''
 
 ## Что делает RateBot
 
