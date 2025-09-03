@@ -1,0 +1,50 @@
+name: RateBot Telegram Notifier
+
+on:
+  schedule:
+    - cron: '30 6 * * *'   # 10:30 Tbilisi time (UTC+4)
+    - cron: '30 10 * * *'  # 14:30 Tbilisi time (UTC+4)
+    - cron: '00 14 * * *'  # 18:00 Tbilisi time (UTC+4)
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r project/requirements.txt
+
+      - name: Create config.ini
+        run: |
+          mkdir -p project
+          echo "[exchange]" > project/config.ini
+          echo "url_base = https://api.apilayer.com/exchangerates_data/latest" >> project/config.ini
+          echo "base_currency = USD" >> project/config.ini
+          echo "target_currency = GEL" >> project/config.ini
+          echo "threshold = 2.7" >> project/config.ini
+          echo "min_threshold = 2.4" >> project/config.ini
+          echo "[telegram]" >> project/config.ini
+          echo "url_telegram = https://api.telegram.org/bot" >> project/config.ini
+
+      - name: Create data.json
+        run: |
+          echo '{
+            "TELEGRAM": {
+              "TOKEN": "${{ secrets.TELEGRAM_TOKEN }}",
+              "CHAT_ID": "${{ secrets.TELEGRAM_CHAT_ID }}"
+            },
+            "access_key": "${{ secrets.EXCHANGE_API_KEY }}"
+          }' > project/data.json
+
+      - name: Run RateBot
+        run: python3 project/exchange_rate.py
