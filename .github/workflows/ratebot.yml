@@ -32,7 +32,7 @@ jobs:
           echo "base_currency = USD" >> project/config.ini
           echo "target_currency = GEL" >> project/config.ini
           echo "threshold = 2.7" >> project/config.ini
-          echo "min_threshold = 2.4" >> project/config.ini
+          echo "min_threshold = 2.67" >> project/config.ini
           echo "[telegram]" >> project/config.ini
           echo "url_telegram = https://api.telegram.org/bot" >> project/config.ini
 
