@@ -6,6 +6,11 @@ on:
     branches:
       - master
 
+  schedule:
+    - cron: '30 6 * * *'   # 10:30 Tbilisi time (UTC+4)
+    - cron: '30 10 * * *'  # 14:30 Tbilisi time (UTC+4)
+    - cron: '00 14 * * *'  # 18:00 Tbilisi time (UTC+4)
+
 jobs:
   run-script:
     runs-on: ubuntu-latest
