@@ -78,21 +78,21 @@ def get_usd_rate(max_retries=3, retry_delay=120):
 
 rate = get_usd_rate()
 
-if rate is None:
-    print("Курс не получен. Завершение работы.")
-    exit(1)
-
 if rate > max_threshold:
-    message = f'📈 Курс {base_currency}/{target_currency}'
-    f'превысил максимум {max_threshold}: {rate}'
+    message = (
+        f'📈 Курс {base_currency}/{target_currency} '
+        f'превысил максимум {max_threshold}: {rate}'
+    )
 elif rate < min_threshold:
-    message = f'📉 Курс {base_currency}/{target_currency}'
-    f'ниже минимума {min_threshold}: {rate}'
+    message = (
+        f'📉 Курс {base_currency}/{target_currency} '
+        f'ниже минимума {min_threshold}: {rate}'
+    )
 else:
     message = (
-        f'✅ Курс в пределах нормы: {min_threshold} ≤ '
-        f'{rate} ≤ {max_threshold}'
-        )
+        f'✅ Курс в пределах нормы: '
+        f'{min_threshold} ≤ {rate} ≤ {max_threshold}'
+    )
 
 print(message)
 send_telegram(message)
