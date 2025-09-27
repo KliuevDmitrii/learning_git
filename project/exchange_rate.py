@@ -1,5 +1,5 @@
 from ConfigProvider import ConfigProvider
-from DataProvider import DataProvider  # оставляем для Telegram токена и chat_id
+from DataProvider import DataProvider
 import requests
 import urllib.parse
 import urllib.request
@@ -41,11 +41,14 @@ def get_usd_rate(max_retries=3, retry_delay=60):
             r = requests.get(url, timeout=10)
             data = r.json()
 
+            # 🔎 Отладка: выводим полный ответ API
+            print("🔎 Ответ API:", data)
+
             if "rates" in data and config.get_target_currency() in data["rates"]:
                 return data["rates"][config.get_target_currency()]
             else:
                 print("Ошибка от API: Нет поля 'rates'")
-                send_telegram("❌ API вернул ошибку или пустые данные.")
+                send_telegram(f"❌ API вернул ошибку или пустые данные. Ответ: {data}")
                 return None
 
         except requests.exceptions.ReadTimeout:
