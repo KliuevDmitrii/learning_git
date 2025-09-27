@@ -10,20 +10,24 @@ class ConfigProvider:
     def __init__(self) -> None:
         self.config = global_config
 
-    def get_exchange_url_base(self):
-        return self.config.get('exchange', 'url_base')
+    def get_exchange_url(self) -> str:
+        """Формирует полный URL для запроса к Frankfurter API"""
+        url_base = self.config.get('exchange', 'url_base')
+        base_currency = self.get_base_currency()
+        target_currency = self.get_target_currency()
+        return f"{url_base}?from={base_currency}&to={target_currency}"
 
-    def get_base_currency(self):
+    def get_base_currency(self) -> str:
         return self.config.get('exchange', 'base_currency')
 
-    def get_target_currency(self):
+    def get_target_currency(self) -> str:
         return self.config.get('exchange', 'target_currency')
 
-    def get_exchange_threshold(self):
+    def get_exchange_threshold(self) -> float:
         return self.config.getfloat('exchange', 'threshold')
 
-    def get_exchange_min_threshold(self):
+    def get_exchange_min_threshold(self) -> float:
         return self.config.getfloat('exchange', 'min_threshold')
 
-    def get_exchange_url_telegram(self):
+    def get_exchange_url_telegram(self) -> str:
         return self.config.get('telegram', 'url_telegram')
