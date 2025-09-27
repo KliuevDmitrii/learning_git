@@ -41,7 +41,7 @@ def get_usd_rate(max_retries=3, retry_delay=60):
             r = requests.get(url, timeout=10)
             data = r.json()
 
-            # 🔎 Отладка: выводим полный ответ API
+            # 🔎 Отладка: выводим ответ API
             print("🔎 Ответ API:", data)
 
             if "rates" in data and config.get_target_currency() in data["rates"]:

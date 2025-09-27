@@ -38,7 +38,7 @@ jobs:
       - name: Create config.ini from env
         run: |
           echo "[exchange]" > project/config.ini
-          echo "url_base = https://api.frankfurter.app/latest" >> project/config.ini
+          echo "url_base = https://api.exchangerate.host/latest" >> project/config.ini
           echo "base_currency = $BASE_CURRENCY" >> project/config.ini
           echo "target_currency = $TARGET_CURRENCY" >> project/config.ini
           echo "threshold = $THRESHOLD" >> project/config.ini

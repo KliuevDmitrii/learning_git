@@ -11,11 +11,11 @@ class ConfigProvider:
         self.config = global_config
 
     def get_exchange_url(self) -> str:
-        """Формирует полный URL для запроса к Frankfurter API"""
+        """Формирует полный URL для запроса к ExchangeRate.host"""
         url_base = self.config.get('exchange', 'url_base')
         base_currency = self.get_base_currency()
         target_currency = self.get_target_currency()
-        return f"{url_base}?from={base_currency}&to={target_currency}"
+        return f"{url_base}?base={base_currency}&symbols={target_currency}"
 
     def get_base_currency(self) -> str:
         return self.config.get('exchange', 'base_currency')
@@ -31,3 +31,4 @@ class ConfigProvider:
 
     def get_exchange_url_telegram(self) -> str:
         return self.config.get('telegram', 'url_telegram')
+
