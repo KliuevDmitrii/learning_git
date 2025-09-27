@@ -11,11 +11,11 @@ class ConfigProvider:
         self.config = global_config
 
     def get_exchange_url(self) -> str:
-        """Формирует полный URL для запроса к ExchangeRate.host"""
+        """Формирует полный URL для запроса к open.er-api.com"""
         url_base = self.config.get('exchange', 'url_base')
         base_currency = self.get_base_currency()
-        target_currency = self.get_target_currency()
-        return f"{url_base}?base={base_currency}&symbols={target_currency}"
+        # Пример: https://open.er-api.com/v6/latest/USD
+        return f"{url_base}/{base_currency}"
 
     def get_base_currency(self) -> str:
         return self.config.get('exchange', 'base_currency')
