@@ -18,8 +18,8 @@ jobs:
     env:
       BASE_CURRENCY: USD
       TARGET_CURRENCY: GEL
-      THRESHOLD: 2.7
-      MIN_THRESHOLD: 2.67
+      THRESHOLD: 2.75
+      MIN_THRESHOLD: 2.7
       TELEGRAM_URL: https://api.telegram.org/bot
 
     steps:
