@@ -3,6 +3,7 @@ name: Run RateBot
 on:
   schedule:
     - cron: '0 7 * * *'     # 11:00 Tbilisi time
+    - cron: '0 10 * * *'    # 14:00
     - cron: '30 12 * * *'   # 16:30
   workflow_dispatch:
 
@@ -34,4 +35,5 @@ jobs:
           git add project/last_rate.json
           git commit -m "update last rate" || echo "No changes"
           git push
+
 
