@@ -2,9 +2,9 @@ name: Run RateBot
 
 on:
   schedule:
-    - cron: '0 7 * * *'     # 11:00 Tbilisi time
-    - cron: '0 10 * * *'    # 14:00
-    - cron: '30 12 * * *'   # 16:30
+    - cron: '0 7 * * *'
+    - cron: '0 10 * * *'
+    - cron: '30 12 * * *'
   workflow_dispatch:
 
 jobs:
@@ -24,6 +24,26 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r project/requirements.txt
+
+      - name: Create config.ini
+        run: |
+          echo "[exchange]" > project/config.ini
+          echo "url_base = https://open.er-api.com/v6/latest/" >> project/config.ini
+          echo "base_currency = USD" >> project/config.ini
+          echo "target_currency = GEL" >> project/config.ini
+          echo "threshold = 2.7" >> project/config.ini
+          echo "min_threshold = 2.67" >> project/config.ini
+          echo "[telegram]" >> project/config.ini
+          echo "url_telegram = https://api.telegram.org/bot" >> project/config.ini
+
+      - name: Create data.json
+        run: |
+          echo '{
+            "TELEGRAM": {
+              "TOKEN": "'"${{ secrets.TELEGRAM_TOKEN }}"'",
+              "CHAT_ID": "'"${{ secrets.TELEGRAM_CHAT_ID }}"'"
+            }
+          }' > project/data.json
 
       - name: Run RateBot
         run: python3 project/exchange_rate.py
