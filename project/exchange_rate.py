@@ -3,22 +3,22 @@ from DataProvider import DataProvider
 import requests
 import urllib.parse
 import urllib.request
-import time
 import json
 import os
+import time
 
 config = ConfigProvider()
-url = config.get_exchange_url()
-print(f"URL used: {url}")
-
 dp = DataProvider()
-max_threshold = config.get_exchange_threshold()
-min_threshold = config.get_exchange_min_threshold()
+
+url = config.get_exchange_url()
+target_currency = config.get_target_currency()
 
 LAST_RATE_FILE = os.path.join(os.path.dirname(__file__), "last_rate.json")
 
+print(f"URL used: {url}")
 
-# ---------- Работа с Telegram ----------
+
+# ---------- Telegram ----------
 def send_telegram(msg: str):
     base_url = config.get_exchange_url_telegram()
     token = dp.get_telegram_token()
@@ -32,16 +32,13 @@ def send_telegram(msg: str):
 
     try:
         with urllib.request.urlopen(url, data=data) as response:
-            result = response.read()
-            print("Уведомление отправлено:", result)
+            print("Уведомление отправлено:", response.read())
     except Exception as e:
-        print("Ошибка отправки в Telegram:", e)
+        print("Ошибка отправки:", e)
 
 
 # ---------- Работа с last_rate ----------
 def load_last_rate():
-    if not os.path.exists(LAST_RATE_FILE):
-        return None
     try:
         with open(LAST_RATE_FILE, "r") as f:
             return json.load(f).get("last_rate")
@@ -55,73 +52,53 @@ def save_last_rate(rate):
 
 
 # ---------- Получение курса ----------
-def get_usd_rate(max_retries=3, retry_delay=60):
-    for attempt in range(1, max_retries + 1):
-        try:
-            print(f"[Попытка {attempt}] Запрашиваем курс...")
+def get_rate():
+    try:
+        r = requests.get(url, timeout=10)
+        data = r.json()
 
-            r = requests.get(url, timeout=10)
-            data = r.json()
+        print("🔎 Ответ API:", data)
 
-            print("🔎 Ответ API:", data)
-
-            if "rates" in data and config.get_target_currency() in data["rates"]:
-                return data["rates"][config.get_target_currency()]
-            else:
-                print("Ошибка от API: Нет поля 'rates'")
-                send_telegram(f"❌ API вернул ошибку или пустые данные. Ответ: {data}")
-                return None
-
-        except requests.exceptions.ReadTimeout:
-            print(f"⏳ Таймаут ({attempt}/{max_retries})")
-            send_telegram(f"⏳ Таймаут при запросе ({attempt}/{max_retries})")
-
-        except Exception as e:
-            print(f"Ошибка: {e}")
-            send_telegram(f"⚠️ Ошибка: {e}")
-
-        if attempt < max_retries:
-            print(f"Ждём {retry_delay} сек...\n")
-            time.sleep(retry_delay)
-
-    send_telegram("❌ Все попытки получить курс не удались.")
-    return None
+        if "rates" in data and target_currency in data["rates"]:
+            return data["rates"][target_currency]
+        return None
+    except Exception as e:
+        print("Ошибка:", e)
+        return None
 
 
-# ---------- Главная логика ----------
-current_rate = get_usd_rate()
+# ---------- Основная логика ----------
+current_rate = get_rate()
+
 if current_rate is None:
-    print("Курс не получен. Завершение.")
+    send_telegram("❌ Не удалось получить курс валюты!")
     exit(1)
 
 last_rate = load_last_rate()
 
 if last_rate is None:
-    message = f"Первый запуск. Текущий курс: {current_rate}"
+    msg = f"Первый запуск.\nТекущий курс: {current_rate}"
+    send_telegram(msg)
     save_last_rate(current_rate)
-    print(message)
-    send_telegram(message)
+    print(msg)
     exit(0)
 
-# ----------- Сравнение ----------
 difference = current_rate - last_rate
 
 if difference > 0:
-    trend = "📈 Курс повысился"
+    trend = "📈 Курс вырос"
 elif difference < 0:
-    trend = "📉 Курс понизился"
+    trend = "📉 Курс упал"
 else:
     trend = "➖ Курс не изменился"
 
-message = (
+msg = (
     f"{trend}\n\n"
     f"📊 Прошлый курс: {last_rate}\n"
     f"📊 Текущий курс: {current_rate}\n"
     f"Δ Разница: {difference:.4f}"
 )
 
-print(message)
-send_telegram(message)
-
-# сохраняем текущий курс как прошлый
+print(msg)
+send_telegram(msg)
 save_last_rate(current_rate)

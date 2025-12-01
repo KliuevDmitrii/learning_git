@@ -1,59 +1,37 @@
 name: Run RateBot
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
-
   schedule:
-    - cron: '00 7 * * *'   # 11:00 Tbilisi time (UTC+4)
-    - cron: '30 12 * * *'  # 16:30 Tbilisi time (UTC+4)
+    - cron: '0 7 * * *'     # 11:00 Tbilisi time
+    - cron: '30 12 * * *'   # 16:30
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
-    env:
-      BASE_CURRENCY: USD
-      TARGET_CURRENCY: GEL
-      THRESHOLD: 2.75
-      MIN_THRESHOLD: 2.7
-      TELEGRAM_URL: https://api.telegram.org/bot
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
-        run: |
-          pip install -r project/requirements.txt
-
-      - name: Create config.ini from env
-        run: |
-          echo "[exchange]" > project/config.ini
-          echo "url_base = https://open.er-api.com/v6/latest" >> project/config.ini
-          echo "base_currency = $BASE_CURRENCY" >> project/config.ini
-          echo "target_currency = $TARGET_CURRENCY" >> project/config.ini
-          echo "threshold = $THRESHOLD" >> project/config.ini
-          echo "min_threshold = $MIN_THRESHOLD" >> project/config.ini
-          echo "[telegram]" >> project/config.ini
-          echo "url_telegram = $TELEGRAM_URL" >> project/config.ini
-
-      - name: Create data.json from secrets
-        run: |
-          echo '{
-            "TELEGRAM": {
-              "TOKEN": "${{ secrets.TELEGRAM_TOKEN }}",
-              "CHAT_ID": "${{ secrets.TELEGRAM_CHAT_ID }}"
-            }
-          }' > project/data.json
+        run: pip install -r project/requirements.txt
 
       - name: Run RateBot
         run: python3 project/exchange_rate.py
+
+      - name: Commit updated last_rate.json
+        run: |
+          git config --global user.name "RateBot"
+          git config --global user.email "ratebot@example.com"
+          git add project/last_rate.json
+          git commit -m "update last rate" || echo "No changes"
+          git push
 
