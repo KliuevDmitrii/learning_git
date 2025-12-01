@@ -52,6 +52,7 @@ jobs:
         run: |
           git config --global user.name "RateBot"
           git config --global user.email "ratebot@example.com"
+          git restore project/config.ini || true
           git add project/last_rate.json
           git commit -m "update last rate" || echo "No changes"
           git push
