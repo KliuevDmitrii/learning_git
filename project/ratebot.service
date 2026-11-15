@@ -1,0 +1,17 @@
+[Unit]
+Description=RateBot currency notifications
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=ratebot
+WorkingDirectory=/opt/ratebot/project
+EnvironmentFile=/etc/ratebot.env
+ExecStart=/opt/ratebot/project/.venv/bin/python -u /opt/ratebot/project/exchange_rate.py --state-file /var/lib/ratebot/last_rate.json
+StateDirectory=ratebot
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

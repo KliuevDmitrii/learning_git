@@ -2,19 +2,21 @@ import configparser
 import os
 
 
-global_config = configparser.ConfigParser(interpolation=None)
-config_path = os.path.join(os.path.dirname(__file__), 'config.ini')
-global_config.read(config_path)
-
-
 class ConfigProvider:
     def __init__(self) -> None:
-        self.config = global_config
+        self.config = configparser.ConfigParser(interpolation=None)
+        config_path = os.path.join(os.path.dirname(__file__), 'config.ini')
+        if not self.config.read(config_path):
+            raise ValueError("Не найден config.ini")
 
     def get_exchange_url(self):
-        base = self.config.get("exchange", "url_base")
-        base_currency = self.config.get("exchange", "base_currency")
-        return f"{base}{base_currency}"
+        return self.config.get("exchange", "url_base")
+
+    def get_poll_interval_seconds(self):
+        interval = self.config.getint("exchange", "poll_interval_seconds", fallback=60)
+        if interval < 1:
+            raise ValueError("poll_interval_seconds должен быть не меньше 1")
+        return interval
 
     def get_base_currency(self):
         return self.config.get("exchange", "base_currency")
